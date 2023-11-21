@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int busqueda_secuencial(int arr[], int n, int x) {
+    for(int i = 0; i < n; i++) {
+        if(arr[i] == x) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int busqueda_binaria(int arr[], int n, int x) {
+    int ini = 0, fin = n - 1;
+    while (ini <= fin) {
+        int med = ini + (fin - ini) / 2;
+        if (arr[med] == x) {
+            return med;
+        }
+        if (arr[med] < x) {
+            ini = med + 1;
+        } else {
+            fin = med - 1;
+        }
+    }
+    return -1;
+}
+
+int main() {
+    int n = 500000;
+    int arr[n];
+    for(int i = 0; i < n; i++) {
+        arr[i] = i + 1;
+    }
+
+    clock_t ini, fin;
+    double tiempo_promedio_sec = 0, tiempo_promedio_bin = 0;
+    int tiempo_min_sec = 1000000000, tiempo_min_bin = 1000000000;
+    int tiempo_max_sec = 0, tiempo_max_bin = 0;
+
+    for(int i = 0; i < 100; i++) {
+        int x = rand() % n + 1;
+
+        ini = clock();
+        int res_sec = busqueda_secuencial(arr, n, x);
+        fin = clock();
+        double tiempo_sec = (double)(fin - ini) / CLOCKS_PER_SEC * 1000;
+
+        ini = clock();
+        int res_bin = busqueda_binaria(arr, n, x);
+        fin = clock();
+        double tiempo_bin = (double)(fin - ini) / CLOCKS_PER_SEC * 1000;
+
+        tiempo_promedio_sec += tiempo_sec;
+        tiempo_promedio_bin += tiempo_bin;
+
+        if(tiempo_sec < tiempo_min_sec) {
+            tiempo_min_sec = tiempo_sec;
+        }
+        if(tiempo_sec > tiempo_max_sec) {
+            tiempo_max_sec = tiempo_sec;
+        }
+
+        if(tiempo_bin < tiempo_min_bin) {
+            tiempo_min_bin = tiempo_bin;
+        }
+        if(tiempo_bin > tiempo_max_bin) {
+            tiempo_max_bin = tiempo_bin;
+        }
+    }
+
+    tiempo_promedio_sec /= 100;
+    tiempo_promedio_bin /= 100;
+	printf("Buqueda secuencial:\n");
+    printf("Tiempo promedio: %.2f milisegundos\n", tiempo_promedio_sec);
+    printf("Tiempo minimo: %d milisegundos\n", tiempo_min_sec);
+    printf("Tiempo maximo: %d milisegundos\n", tiempo_max_sec);
+
+	printf("Busqueda Binario:\n");
+    printf("Tiempo promedio: %.2f milisegundos\n", tiempo_promedio_bin);
+    printf("Tiempo minimo: %d milisegundos\n", tiempo_min_bin);
+    printf("Tiempo maximo: %d milisegundos\n", tiempo_max_bin);
+
+    return 0;
+}
